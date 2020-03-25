@@ -11,7 +11,7 @@ import java.util.Random;
 public class ProducerConsumerMain {
 
 	public static void main(String[] args) {
-		SharedObject sharedStream = new SharedObject();
+		Sharedqueue sharedStream = new Sharedqueue();
 
 		Thread consumerThread = new Thread(new ConsumerThread(sharedStream), "consumer");
 		Thread producerThread = new Thread(new ProducerThread(sharedStream), "produer");
@@ -32,9 +32,9 @@ public class ProducerConsumerMain {
 
 class ConsumerThread implements Runnable {
 
-	private SharedObject sharedStream;
+	private Sharedqueue sharedStream;
 
-	public ConsumerThread(SharedObject sharedStream) {
+	public ConsumerThread(Sharedqueue sharedStream) {
 		this.sharedStream = sharedStream;
 	}
 
@@ -53,14 +53,14 @@ class ConsumerThread implements Runnable {
 
 class ProducerThread implements Runnable {
 
-	private SharedObject sharedStream;
+	private Sharedqueue sharedStream;
 	private Random random = new Random(10);
 	// long[] arr = {1000, 2000, 3000, 4000, 5000, 6000, 5000, 4000, 3000, 2000,
 	// 1000};
 	long[] arr = { 1000, 6000, 1000 };
 	int count = 0;
 
-	public ProducerThread(SharedObject sharedStream) {
+	public ProducerThread(Sharedqueue sharedStream) {
 		this.sharedStream = sharedStream;
 	}
 
@@ -81,11 +81,11 @@ class ProducerThread implements Runnable {
 
 }
 
-class SharedObject {
+class Sharedqueue {
 
 	private Queue<Integer> queue;
 
-	public SharedObject() {
+	public Sharedqueue() {
 		queue = new PriorityQueue<Integer>();
 	}
 

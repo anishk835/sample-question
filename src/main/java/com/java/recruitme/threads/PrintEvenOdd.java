@@ -1,4 +1,4 @@
-package com.java.threads;
+package com.java.recruitme.threads;
 
 import java.util.HashSet;
 import java.util.Set;
