@@ -3,8 +3,6 @@ package com.java.recruitme.equalityProblem;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.junit.Assert;
-
 public class Player  {
 
 	private String name;
