@@ -108,6 +108,35 @@ java-coding-practice/
 - `Codechef_ZCO15004.java` - ZCO 2015 problem
 - `CodilityAdjacentString.java` - Codility string manipulation challenge
 
+## 🤖 Automated Program Execution on GitHub
+
+**All programs run automatically on every push!** 🎉
+
+### View Program Outputs Online
+
+1. **Go to the [Actions tab](../../actions)** in this repository
+2. Click on the latest workflow run (green ✅ = success, red ❌ = failures)
+3. Click on the **"build-and-test"** job
+4. Expand the workflow steps to see outputs:
+   - **"Build with Maven"** - Compilation results
+   - **"Run all tests"** - JUnit test execution
+   - **"Run sample programs"** - Individual program outputs
+
+**Programs that run automatically:**
+- Binary Tree traversals and algorithms
+- Dijkstra's shortest path algorithm
+- Producer-Consumer multithreading demo
+- Character count analysis
+- Prime number generation
+
+### Manual Trigger
+
+You can also trigger the workflow manually:
+1. Go to [Actions tab](../../actions)
+2. Click "Java CI - Run All Programs" on the left
+3. Click "Run workflow" button
+4. Select branch and click "Run workflow"
+
 ## 🚀 Getting Started
 
 ### Prerequisites
