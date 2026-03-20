@@ -1,0 +1,247 @@
+name: Run Java Program On-Demand
+
+on:
+  workflow_dispatch:
+    inputs:
+      program_name:
+        description: 'Select Program to Run'
+        required: true
+        type: choice
+        options:
+          - 'BinaryTree - Tree traversals and operations'
+          - 'DijkstraAlgo - Shortest path algorithm'
+          - 'ManachersAlgo - Longest palindrome'
+          - 'StringKMPSearch - Pattern matching'
+          - 'ImplementQueueUsingStack - Queue using stacks'
+          - 'ReverseSubArray - Array manipulation'
+          - 'SubMatrixSum - 2D matrix queries'
+          - 'ProducerConsumerDemo - Producer-consumer (infinite, 10s recommended)'
+          - 'ProducerConsumerMain - Producer-consumer variant (infinite, 10s recommended)'
+          - 'PrintEvenOdd - Even/odd sequence (infinite, 10s recommended)'
+          - 'Printevenoddsequentialusinglock - Even/odd with locks (infinite, 10s recommended)'
+          - 'Printoddevenusinglockonobect - Even/odd with monitor (infinite, 10s recommended)'
+          - 'InterThreadCommunication - Thread communication (infinite, 10s recommended)'
+          - 'ExecutorServiceSample - Thread pool (may fail - needs external file)'
+          - 'CharacterCount - Character frequency'
+          - 'Convertstringtointeger - String to int (REQUIRES INPUT)'
+          - 'ConvertIntegerToRoman - Integer to Roman (REQUIRES INPUT)'
+          - 'ExpressionValidatorImpl - Bracket validation'
+          - 'Prime - Prime number generator'
+          - 'ComparatorImpl - Custom comparator'
+          - 'Player - equals/hashCode demo'
+          - 'InnerClass - Inner class patterns'
+          - 'ReflectionUsingString - Reflection API'
+          - 'CopyConstructor - Copy constructor pattern'
+          - 'FailSafe - Fail-safe iterators'
+          - 'CodilityAdjacentString - Codility challenge'
+          - 'Codechef_ZCO15004 - CodeChef problem (REQUIRES STDIN)'
+
+      program_input:
+        description: 'Input (required for some programs - see dropdown)'
+        required: false
+        type: string
+        default: ''
+
+      timeout_seconds:
+        description: 'Timeout in seconds (default 30, max 300, use 10 for infinite programs)'
+        required: false
+        type: number
+        default: 30
+
+jobs:
+  run-program:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+
+    - name: Build with Maven
+      run: mvn clean compile
+
+    - name: Parse program selection
+      id: parse
+      run: |
+        PROGRAM="${{ inputs.program_name }}"
+        PROGRAM_KEY=$(echo "$PROGRAM" | cut -d' ' -f1)
+        echo "program_key=$PROGRAM_KEY" >> $GITHUB_OUTPUT
+
+        # Map program names to fully qualified class names
+        case "$PROGRAM_KEY" in
+          BinaryTree) CLASS="com.java.recruitme.algo.BinaryTree" ;;
+          DijkstraAlgo) CLASS="com.java.recruitme.algo.DijkstraAlgo" ;;
+          ManachersAlgo) CLASS="com.java.recruitme.algo.ManachersAlgo" ;;
+          StringKMPSearch) CLASS="com.java.recruitme.algo.StringKMPSearch" ;;
+          ImplementQueueUsingStack) CLASS="com.java.recruitme.algo.ImplementQueueUsingStack" ;;
+          ReverseSubArray) CLASS="com.java.recruitme.algo.ReverseSubArray" ;;
+          SubMatrixSum) CLASS="com.java.recruitme.algo.SubMatrixSum" ;;
+          ProducerConsumerDemo) CLASS="com.java.recruitme.threads.ProducerConsumerDemo" ;;
+          ProducerConsumerMain) CLASS="com.java.recruitme.threads.ProducerConsumerMain" ;;
+          PrintEvenOdd) CLASS="com.java.recruitme.threads.PrintEvenOdd" ;;
+          Printevenoddsequentialusinglock) CLASS="com.java.recruitme.threads.Printevenoddsequentialusinglock" ;;
+          Printoddevenusinglockonobect) CLASS="com.java.recruitme.threads.Printoddevenusinglockonobect" ;;
+          InterThreadCommunication) CLASS="com.java.recruitme.threads.InterThreadCommunication" ;;
+          ExecutorServiceSample) CLASS="com.java.recruitme.threads.ExecutorServiceSample" ;;
+          CharacterCount) CLASS="com.java.recruitme.characterCount.CharacterCount" ;;
+          Convertstringtointeger) CLASS="com.java.recruitme.Convertstringtointeger" ;;
+          ConvertIntegerToRoman) CLASS="com.java.recruitme.ConvertIntegerToRoman" ;;
+          Prime) CLASS="com.java.recruitme.primes.Prime" ;;
+          ExpressionValidatorImpl) CLASS="com.java.recruitme.expressionValidator.ExpressionValidatorImpl" ;;
+          ComparatorImpl) CLASS="com.java.recruitme.comparator.ComparatorImpl" ;;
+          Player) CLASS="com.java.recruitme.equalityProblem.Player" ;;
+          InnerClass) CLASS="com.java.recruitme.innerclass.InnerClass" ;;
+          ReflectionUsingString) CLASS="com.java.recruitme.ReflectionUsingString" ;;
+          CopyConstructor) CLASS="com.java.recruitme.CopyConstructor" ;;
+          FailSafe) CLASS="com.java.recruitme.FailSafe" ;;
+          CodilityAdjacentString) CLASS="codechef.CodilityAdjacentString" ;;
+          Codechef_ZCO15004) CLASS="codechef.Codechef_ZCO15004" ;;
+          *) echo "❌ Unknown program: $PROGRAM_KEY"; exit 1 ;;
+        esac
+
+        echo "main_class=$CLASS" >> $GITHUB_OUTPUT
+
+    - name: Run selected program
+      id: run_program
+      run: |
+        MAIN_CLASS="${{ steps.parse.outputs.main_class }}"
+        PROGRAM_KEY="${{ steps.parse.outputs.program_key }}"
+        INPUT="${{ inputs.program_input }}"
+        TIMEOUT="${{ inputs.timeout_seconds }}"
+
+        # Validate and cap timeout
+        if [ "$TIMEOUT" -gt 300 ]; then
+          echo "⚠️  Timeout capped at 300s maximum"
+          TIMEOUT=300
+        fi
+
+        echo "========================================="
+        echo "🚀 Running: $PROGRAM_KEY"
+        echo "📦 Class: $MAIN_CLASS"
+        echo "⏱️  Timeout: ${TIMEOUT}s"
+        if [ -n "$INPUT" ]; then
+          echo "📝 Input provided: Yes"
+        fi
+        echo "========================================="
+        echo ""
+
+        EXIT_CODE=0
+
+        # Handle different program types
+        case "$PROGRAM_KEY" in
+          Convertstringtointeger|ConvertIntegerToRoman)
+            # Command-line args programs
+            if [ -z "$INPUT" ]; then
+              echo "❌ ERROR: This program requires input in the 'Input' field."
+              echo ""
+              echo "Examples:"
+              echo "  - Convertstringtointeger: Enter a number like '1234'"
+              echo "  - ConvertIntegerToRoman: Enter an integer like '2024'"
+              exit 1
+            fi
+            echo "▶️  Executing with command-line argument: $INPUT"
+            echo ""
+            timeout ${TIMEOUT}s mvn exec:java -Dexec.mainClass="$MAIN_CLASS" -Dexec.args="$INPUT" || EXIT_CODE=$?
+            ;;
+
+          Codechef_ZCO15004)
+            # stdin program
+            if [ -z "$INPUT" ]; then
+              echo "❌ ERROR: This program requires stdin input."
+              echo ""
+              echo "Example format (use actual newlines or \\n):"
+              echo "3"
+              echo "2 5"
+              echo "4 3"
+              echo "6 2"
+              exit 1
+            fi
+            echo "▶️  Executing with stdin input"
+            echo ""
+            # Handle both literal newlines and \n sequences
+            echo -e "$INPUT" | timeout ${TIMEOUT}s mvn exec:java -Dexec.mainClass="$MAIN_CLASS" || EXIT_CODE=$?
+            ;;
+
+          CodilityAdjacentString)
+            # stdin program (but works without input too)
+            echo "▶️  Executing (can accept stdin input)"
+            echo ""
+            if [ -n "$INPUT" ]; then
+              echo -e "$INPUT" | timeout ${TIMEOUT}s mvn exec:java -Dexec.mainClass="$MAIN_CLASS" || EXIT_CODE=$?
+            else
+              timeout ${TIMEOUT}s mvn exec:java -Dexec.mainClass="$MAIN_CLASS" || EXIT_CODE=$?
+            fi
+            ;;
+
+          ProducerConsumerDemo|ProducerConsumerMain|PrintEvenOdd|Printevenoddsequentialusinglock|Printoddevenusinglockonobect|InterThreadCommunication)
+            # Infinite loop programs - always use timeout
+            echo "ℹ️  NOTE: This program runs infinitely. Will terminate after ${TIMEOUT}s."
+            echo ""
+            echo "▶️  Executing with timeout..."
+            echo ""
+            timeout ${TIMEOUT}s mvn exec:java -Dexec.mainClass="$MAIN_CLASS" || EXIT_CODE=$?
+            if [ "$EXIT_CODE" -eq 124 ]; then
+              echo ""
+              echo "========================================="
+              echo "✅ Program terminated after ${TIMEOUT}s (expected behavior for infinite loop)"
+              echo "========================================="
+              exit 0
+            fi
+            ;;
+
+          ExecutorServiceSample)
+            # External file dependency - may fail
+            echo "ℹ️  NOTE: This program requires an external file. It may fail gracefully."
+            echo ""
+            echo "▶️  Executing..."
+            echo ""
+            timeout ${TIMEOUT}s mvn exec:java -Dexec.mainClass="$MAIN_CLASS" || EXIT_CODE=$?
+            if [ "$EXIT_CODE" -ne 0 ] && [ "$EXIT_CODE" -ne 124 ]; then
+              echo ""
+              echo "========================================="
+              echo "⚠️  Program failed (likely missing external file - this is expected)"
+              echo "========================================="
+              exit 0
+            fi
+            ;;
+
+          *)
+            # Standard self-contained programs
+            echo "▶️  Executing..."
+            echo ""
+            timeout ${TIMEOUT}s mvn exec:java -Dexec.mainClass="$MAIN_CLASS" || EXIT_CODE=$?
+            ;;
+        esac
+
+        # Check exit code
+        if [ "$EXIT_CODE" -eq 124 ]; then
+          echo ""
+          echo "========================================="
+          echo "❌ ERROR: Program exceeded ${TIMEOUT}s timeout"
+          echo "Try increasing the timeout value or use a shorter timeout for testing."
+          echo "========================================="
+          exit 1
+        elif [ "$EXIT_CODE" -ne 0 ]; then
+          echo ""
+          echo "========================================="
+          echo "❌ ERROR: Program exited with code $EXIT_CODE"
+          echo "========================================="
+          exit 1
+        fi
+
+    - name: Display summary
+      if: always()
+      run: |
+        echo ""
+        echo "========================================="
+        echo "📊 Execution Summary"
+        echo "========================================="
+        echo "Program: ${{ steps.parse.outputs.program_key }}"
+        echo "Status: ${{ steps.run_program.outcome }}"
+        echo "========================================="

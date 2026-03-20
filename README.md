@@ -137,6 +137,129 @@ You can also trigger the workflow manually:
 3. Click "Run workflow" button
 4. Select branch and click "Run workflow"
 
+## 🎮 Run Individual Programs On-Demand
+
+**Want to run a specific program?** You can now execute ANY of the 27 programs individually!
+
+### How to Use
+
+1. **Navigate to the [Actions tab](../../actions)**
+2. **Select "Run Java Program On-Demand"** from the left sidebar
+3. **Configure your run:**
+   - **Program**: Choose from dropdown (27 programs available!)
+   - **Input**: Provide input for programs that need it (see table below)
+   - **Timeout**: Set execution timeout (default: 30s, max: 300s)
+4. **Click "Run workflow"**
+5. **View results**: Click on the workflow run, then expand "Run selected program" step
+
+### Program Input Requirements
+
+| Program | Input | Format | Example |
+|---------|-------|--------|---------|
+| **Convertstringtointeger** | ✅ Required | String number | `1234` |
+| **ConvertIntegerToRoman** | ✅ Required | Integer (1-4999) | `2024` |
+| **Codechef_ZCO15004** | ✅ Required | Multi-line stdin | See example below |
+| **CodilityAdjacentString** | ⭕ Optional | Test string | `ab??aba` |
+| **All threading programs** | ⏱️ Timeout | Use 10-30s | Infinite loops |
+| **ExecutorServiceSample** | ⚠️ May fail | External file needed | Expected failure |
+| **All other programs** | ❌ None | Self-contained | Leave blank |
+
+### Quick Start Examples
+
+#### Example 1: Run BinaryTree (No Input)
+1. Select **"BinaryTree - Tree traversals and operations"**
+2. Leave input blank
+3. Use default 30s timeout
+4. Click "Run workflow"
+5. ✅ See tree traversal output!
+
+#### Example 2: Convert Integer to Roman (Needs Input)
+1. Select **"ConvertIntegerToRoman - Integer to Roman (REQUIRES INPUT)"**
+2. Enter input: `2024`
+3. Use default 30s timeout
+4. Click "Run workflow"
+5. ✅ Output shows: `MMXXIV`
+
+#### Example 3: Producer-Consumer Demo (Infinite Loop)
+1. Select **"ProducerConsumerDemo - Producer-consumer (infinite, 10s recommended)"**
+2. Leave input blank
+3. Set timeout: `10` seconds
+4. Click "Run workflow"
+5. ✅ See 10 seconds of producer-consumer interaction, then graceful termination
+
+#### Example 4: CodeChef Problem (Stdin Input)
+1. Select **"Codechef_ZCO15004 - CodeChef problem (REQUIRES STDIN)"**
+2. Enter multi-line input (use actual newlines or `\n`):
+   ```
+   3
+   2 5
+   4 3
+   6 2
+   ```
+3. Use default 30s timeout
+4. Click "Run workflow"
+5. ✅ See calculated rectangular area!
+
+### Available Programs by Category
+
+#### 🔢 Algorithms & Data Structures (7 programs)
+- BinaryTree - Tree traversals, max path sum
+- DijkstraAlgo - Shortest path algorithm
+- ManachersAlgo - Longest palindrome (linear time)
+- StringKMPSearch - KMP pattern matching
+- ImplementQueueUsingStack - Queue using two stacks
+- ReverseSubArray - Array manipulation
+- SubMatrixSum - 2D matrix range queries
+
+#### 🧵 Threading & Concurrency (7 programs)
+⏱️ **Note**: These run infinitely. Use **10-30 second timeout**.
+- ProducerConsumerDemo - Classic producer-consumer
+- ProducerConsumerMain - Producer-consumer variant
+- PrintEvenOdd - Even/odd sequence printing
+- Printevenoddsequentialusinglock - Even/odd with ReentrantLock
+- Printoddevenusinglockonobect - Even/odd with monitor locks
+- InterThreadCommunication - Piped stream communication
+- ExecutorServiceSample - Thread pool (requires external file)
+
+#### 🔤 String & Utilities (6 programs)
+- CharacterCount - Character frequency analysis
+- Convertstringtointeger - atoi implementation (**needs input**)
+- ConvertIntegerToRoman - Integer to Roman numeral (**needs input**)
+- ExpressionValidatorImpl - Balanced bracket validation
+- Prime - Prime number generation
+- ReflectionUsingString - Reflection API demo
+
+#### 🎯 OOP & Design Patterns (5 programs)
+- ComparatorImpl - Custom comparator
+- Player - equals/hashCode contract
+- InnerClass - Inner class patterns
+- CopyConstructor - Copy constructor pattern
+- FailSafe - Fail-safe iterator
+
+#### 🏆 Competitive Programming (2 programs)
+- CodilityAdjacentString - String manipulation challenge
+- Codechef_ZCO15004 - Rectangular area calculation (**needs stdin**)
+
+### Troubleshooting
+
+**"ERROR: This program requires input"**
+- Check the input requirements table above
+- Provide appropriate input in the "Input" field
+
+**"Program exceeded timeout"**
+- Increase timeout value (especially for threading programs)
+- Infinite loop programs need 10-30s to demonstrate behavior
+
+**ExecutorServiceSample fails**
+- This is **EXPECTED** - program requires external file not in repository
+- Demonstrates graceful error handling
+
+**Tips:**
+- Threading programs show interesting behavior in 10-30 seconds
+- Use short timeouts (10-15s) to save GitHub Actions minutes
+- All programs requiring input are clearly marked in dropdown
+- Execution logs show detailed output including print statements
+
 ## 🚀 Getting Started
 
 ### Prerequisites
